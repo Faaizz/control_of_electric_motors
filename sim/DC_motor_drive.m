@@ -1,0 +1,20 @@
+% THIS SCRIPT EXAMINES THE RESPONSE OF A DC MOTOR DRIVE TO DIFFERENT INPUT 
+% VOLTAGES AT NO LOAD WHILE ASSUMING THE MAGNETIC FLUX REMAINS CONSTANT.
+
+% CORRESPONDING SIMULINK MODEL: "DC_motor_drive_sim.slx"
+
+%% INITIALIZE
+DC_motor_init;
+
+
+%% CASE 1
+
+% Supply Volatage (V)
+Va= 70;
+
+% SIMULATION
+sim_out= sim('DC_motor_drive_sim', end_time);
+
+% GRAPHING
+plot_drive_response;
+

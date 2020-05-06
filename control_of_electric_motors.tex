@@ -1,0 +1,597 @@
+% DOCUMENT
+\documentclass[a4paper]{article}
+
+% PACKAGES
+\usepackage{titlesec}
+\usepackage[english]{babel}
+\usepackage{blindtext}
+\usepackage{graphicx} 
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{mathptmx}
+\usepackage{layout}
+\usepackage{geometry}
+
+% SETTINGS
+% Title Format
+\titleformat*{\section}{\large\MakeUppercase}
+\titleformat*{\subsection}{\large\MakeUppercase}
+\titleformat*{\subsubsection}{\large}
+% Remove paragraph indentation
+\setlength\parindent{0pt}
+% Set margins
+\geometry{margin=1in}
+
+% TITLE
+\title{\Huge{Control of Electric Motors}}
+\author{Faizudeen Kajogbola} 
+\date{} %BLACK DATE TO  OMIT DATE FROM TITLE
+
+% DOCUMENT
+\begin{document}%\layout
+% DISPLAY TITLE
+\maketitle
+
+\setlength{\headsep}{5pt}
+% \setlength{\voffset}{-0.75in}   % REMOVE EXCESSIVE SPACE AT TOP OF PAGE
+
+% BASIC LAWS AND RELATIONSHIPS
+\section{Basic Laws and Relationships}
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsection{Ampere's Law}
+Ampere's law gives the relationship between a magnetic field and the current that produces the magnetic field.
+Let's consider a rectangular core of a ferromagnetic material (e.g. Iron). 
+Due to high relative permeability of ferromagnets, the produced magnetic field remains in the core.
+Ampere's Law in this case then states: 
+
+$$\oint \vec{H} \cdot \vec{dl}= I_{net}$$
+- $\vec{H}$ is the magnetic field intensity.\\
+- $\vec{dl}$ is the differential element of length along the path of integration.  \\
+- $I_{net}$ is the magnetomotive force (i.e. current through coil * no of turns).  \\
+
+Further,
+$$\vec{B}= \mu \  \vec{H}$$
+- $\mu$ is permeability of the material.  \\
+
+And,
+$$\phi= \int_{A} \vec{B} \cdot \vec{dA}$$
+
+An analogy of the Ohm's Law in magnetic circuits is given as:
+$$mmf= \frac{\phi}{R_{m}}$$
+- $mmf$ is the Magnetomotive Force measured in Ampere-turns.  \\
+- $R_m$ is magnetic reluctance.  \\
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsection{Faraday's Law}
+States that EMF is generated in a conductor when it cuts through magnetic flux according to the following relationship:
+$$e= -\frac{d\phi}{dt}$$
+\textit{the negative sign is explained by Lenz's Law}. \\
+If we consider a magnetic field with evenly distributed flux (i.e. constant $\vec{B}$), 
+then $\frac{d\phi}{dt}$ becomes $\frac{dA}{dt} \times \vec{B}$. Also, assuming the conductors are 
+of a fixed length (which is almost always true) we have:
+$$e= \left( \vec{v} \times \vec{B} \right) \cdot \vec{l} $$
+- $\vec{v}$ is the velocity at which the conductor is moving relative to the coil.\\
+- $\vec{l}$ is the length of the conductor, pointing along the direction that makes the smallest angle with 
+$\left( \vec{v} \times \vec{B} \right)$. \\ 
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsection{Lenz's Law}
+States that the direction of EMF induced in a conductor under the influence of a changing magnetic field is 
+such that it produces a flux that opposes its causal flux. This accounts for the negative sign in Faraday's Law.  
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsection{Lorentz Law}
+The force experienced by a current-carrying conductor under the influence of a magnetic field is given by:
+$$ \vec{F}= \left( \vec{l} \times \vec{B} \right) \ i $$
+- $\vec{l}$ is the vector of conductor length pointing along the direction of current flow.
+
+
+% DC MOTORS
+%---------------------------------------------------------------------------------------------------------------------------%
+\section{DC Motors}
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsection{Modelling of DC Motors}
+The most common DC motors are seperately excited DC motors. 
+They have seperate DC supplies for the armature and field windings.
+Modelling a seperately excited DC motor is a 4-step process.
+
+\begin{itemize}
+
+    \item \textbf{Armature Circuit}: 
+            The armature circuit can be represented with the following equation:
+            $$ V_{a}= i_{a} R_{a} + L\frac{di_{a}}{dt} + e_{b} $$
+            - $V_{a}$ is the supply voltage to the armature circuit.\\
+            - $R_{a}$, $L_{a}$, and $i_{a}$ are the armature winding resistance, winding inductance and current respectively.\\
+            - $e_{b}$ is the back EMF.
+
+    \item \textbf{Back EMF}:
+            The back EMF is the Faraday's law on the armature windings as they cut through the field flux. 
+            As an extension of Faraday's law, 
+            $$e_{b}= k_{b} \omega_{m} \phi_{f} $$ 
+            where $k_{b}$ is a constant that depends on the motor design, $\omega_{m}$ is the angular velocity of the rotor, 
+            and $\phi_{f}$ is the field flux.
+
+    \item \textbf{Torque}:
+            According to Lorentz Law, force is generated on the armature winding conductors as they are carrying currents and under 
+            the influence of the field flux. By mounting these conductors on an axle that's free to rotate and due to the effects of 
+            commutation (which prevents oscillatory rotation), a torque is developed by the DC motor. Because the direction of armature 
+            current is always perpendicular to the direction of field flux in a DC motor, we can express the force on each winding 
+            conductor as a multiplication (not a cross product) $\vec{F}= l B i$ in the appropriate direction. 
+            For each winding conductor, a torque $\vec{T}= \vec{F} \times \vec{r} $ is produced. If the armature winding coils are 
+            fixed in space; designed to be equidistant; and of uniform diameter and length, the equivalent torque generated can be given as: 
+            $$ T_{m}= k_{t} i_{a} \phi_{f} $$
+            Where $k_{t}$ is a constant that depends on the design of the motor.\\
+            In SI units, $k_{b}$ and $k_{t}$ are numerically equal.
+
+    \item \textbf{Mechanical Load System}:
+            The mechanical load system of a DC motor consists of the motor's mechanical representation and the load attached 
+            (maybe via a set of gears). From Newton's second law, we have:
+            $$ T_{m}= J\frac{d \omega_{m}}{dt} + D \omega_{m} + T_{l} $$
+            - $J$ is the moment of inertia of the motor.\\
+            - $D$ is the coefficeint of rotational friction of the motor.\\
+            - $T_{l}$ is the load torque.\\
+
+\end{itemize}
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{Aside: Gears}
+
+%---------------------------------------------------------------------------------------------------------------------------%
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsection{Steady-State Characteristics of DC Motors}
+
+At steady state $\frac{di_{a}}{dt}$ = $\frac{d\omega_{m}}{dt}$ = $0$, the model equations can then be reduced to:
+
+$$ i_{a}= \frac{V_{a} - e_{b}}{R_{a}} $$
+$$ T_{m}= \frac{\left(V_{a} - k_{b} \omega_{m} \phi_{f}\right) k_{t} \phi_{f}}{R_{a}} $$
+Since $k_{b}$ = $k_{i}$ (assuming SI units), let $K:= k_{b}= k_{t}$
+$$ T_{m}= \frac{ K \phi_{f} V_{a} }{R_{a}} - \frac{ K^{2} \phi_{f}^{2} \omega_{m} }{R_{a}} $$
+$$ T_{l}= \frac{ K \phi_{f} V_{a} }{R_{a}} - \frac{ \omega_{m} \left( K^{2} \phi_{f}^{2} - D R_{a} \right) }{R_{a}} $$
+$$ \omega_{m}=  \frac{ R_{a} }{ \left( K^{2} \phi_{f}^{2} - D R_{a} \right) }  \left( \frac{ K \phi_{f} V_{a} }{R_{a}} - T_{l} \right) $$
+For simplicity, ket us ignore the rotational friction in the motor, then we have:
+$$ \omega_{m}=  \frac{V_{a}}{ K \phi_{f} } - \frac{ R_{a} }{ \left( K^{2} \phi_{f}^{2} \right) } T_{l}  $$
+
+This shows that the terminal voltage $V_{a}$ and the field flux $\phi_{f}$ are directly and inversely proportional to the motor speed 
+$w_{m}$ respectively. Thus to control the motor speed, we can vary $V_{a}$ or $\phi_{f}$. This relationship is dipicted in Figure \ref{fig:DC_motor_speed_torque}.
+\\
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/DC_motors_speed-torque.png}
+        \caption{DC Motor Speed-Torque Relationship \cite{kim17}}
+        \label{fig:DC_motor_speed_torque}
+\end{figure}
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{Armature Voltage Control}
+Increasing the terminal voltage of a DC motor (at constant load torque) increases its back EMF and subsequently its speed. 
+This is called *terminal Voltage Control*. Since the terminal voltage cannot be raised above the rated voltage of the machine, 
+the speed of the motor cannot be increased beyond its rated speed using this method. 
+Figure \ref{fig:DC_motor_vol} shows the relationship between the terminal voltage, speed, and torque of a DC motor.
+\\
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/DC_motors_armature_voltage_control.png}
+        \caption{DC Motor terminal Voltage Control \cite{kim17}}
+        \label{fig:DC_motor_vol}
+\end{figure}
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{Field Flux Control}
+The field flux of a DC motor is inversely proportional to the motor speed, thus reducing the field flux increases the speed. 
+With this method, the motor speed can be raised above the rated value. 
+However, the response is often slow because the field windings are designed to produce large flux which often cna't be changed 
+rapidly. Also, very low flux can easily be affected by armature reaction.
+The typical relationship between the field flux, motor torque and motor speed are shown in Figure \ref{fig:DC_motor_flux}.
+\\
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/DC_motors_field_flux_control.png}
+        \caption{DC Motor Field Flux Control \cite{kim17}}
+        \label{fig:DC_motor_flux}
+\end{figure}
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{Operation Regions of DC Motors}
+
+There are two operating regions for a typical DC motors: *constant torque region* and *constant power region*. \\
+
+In the constant torque region, the motor speed is $0 \le \omega_{m} \le \omega_{base}$. 
+It is called the constant torque region because the torque developed is dependent on the armature current (since the field flux is constant). 
+The same armature current produces the same torque regardless of the speed. 
+$\omega_{base}$ is the speed developed at the rated voltage (may be different from the rated speed depending on the operating conditions).\\
+\\
+In the constant power (field weakening) region, the speed  $\omega_{m} \ge \omega_{base}$ is increased by reducing the field flux.
+The back EMF $e_{b}= k_{b} \phi_{f} \omega_{m} $  can be kept constant as the speed is increasing and the flux is reducing leading to constant armature current.
+It is called the constant power region because the terminal voltage and the armature current are constant, yielding a constant power regardless of the motor speed.\\
+\\
+The speed-torque characteristics of a typical DC motor highlighting the various operating modes is shown in Figure 
+\ref{fig:DC_motor_cap}, it is commonly known as the capability curve.
+
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/DC_motor_capability_curve.png}
+        \caption{DC Motor Capability Curve \cite{kim17}}
+        \label{fig:DC_motor_cap}
+\end{figure}
+
+
+%---------------------------------------------------------------------------------------------------------------------------%
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsection{Transient Response Characteristics of DC Motors}
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{Transfer Function}
+
+By taking the Laplace transform of the model equations, we can obtain the transfer function of the DC motor:
+
+$$ I_{a}(s)= \frac{ V_{a}(s) - E_{b}(s) }{ s L_{a} + R_{a} } $$
+
+$$ \omega_{m}(s)= \frac{ T_{m}(s) - T_{l}(s) }{ s J + D }  $$
+
+
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/DC_motor_transfer_function.png}
+        \caption{DC Motor Transfer Function \cite{kim17}}
+        \label{fig:DC_motor_trns}
+\end{figure}
+
+
+$$  \omega_{m}(s)=  \frac{ 
+                k_{t} \phi_{f} 
+        }{ 
+                \left( k_{t} k_{b} \phi_{f}^{2} \right) + \left( s L_{a} + R_{a} \right) \left( s J + D \right)  
+        } V_{a}(s) - 
+        \frac{ s L_{a} + R_{a} }{ 
+                \left( k_{t} k_{b} \phi_{f}^{2} \right) + \left( s L_{a} + R_{a} \right) \left( s J + D \right)  
+         } T_{l}(s)
+$$
+
+Transfer function from the motor input (armature voltage $V_{a}$) to its output (motor speed $\omega_{m}$) is:
+
+$$  \omega_{m}(s)=  \frac{ 
+                k_{t} \phi_{f} 
+        }{ 
+               s^{2} L_{a} J + s \left( L_{a} D + J R_{a} \right) +  R_{a} D + k_{t} k_{b} \phi_{f}^{2}
+        } V_{a}(s) 
+$$
+
+$$  \omega_{m}(s)=  \frac{ 
+                \frac{ k_{t} \phi_{f} }{ L_{a} J } 
+        }{ 
+               s^{2} + s \left( \frac{D}{J} + \frac{R_{a}}{L_{a}} \right) +  \frac{R_{a} D}{L_{a} J} +
+               \frac{k_{t} k_{b} \phi_{f}^{2}}{L_{a} J}
+        } V_{a}(s) 
+$$
+
+If we assume $D=0$ and $k_{t}=k_{b}$ such that $k_{t}\phi_{f}= k_{b}\phi_{f}= K$, then we have:
+
+$$
+\omega_{m}(s)= \frac{ 
+                        \frac{K}{L_{a} J}
+                }{
+                        s^{2} + s \frac{R_{a}}{L_{a}} + \frac{K^{2}}{L_{a} J}
+                }=
+                \frac{
+                        \frac{1}{K} \frac{R_{a}}{L_{a}} \frac{K^{2}}{J R_{a}}
+                }{
+                        s^{2} + s \frac{R_{a}}{L_{a}} + \frac{K^{2}}{L_{a} J}
+                } V_{a}(s) 
+$$
+
+If we define the electric time constant as $\tau_{e}= \frac{L_{a}}{R_{a}}$ and the electromagnetic time constant 
+as $ \tau_{m}= \frac{J R_{a}}{K^{2}} $, then our transfer function can be rewritten as:
+
+$$
+\frac{\omega_{m}(s)}{V_{a}(s)}= \frac{
+                        \frac{1}{K} \frac{1}{\tau_{e} \tau_{m}}
+                }{
+                        s^{2} + s \frac{1}{\tau_{e}} + \frac{1}{\tau_{e} \tau_{m}}
+                }  
+$$
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{Stability and Nature of Response}
+
+From the derived transfer function, we can extract the poles of the system as:
+
+$$
+s_{1,2}= -\frac{1}{2 \tau_{e}} \pm \sqrt{\frac{1}{4 \tau_{e}^{2}} - \frac{1}{\tau_{e} \tau_{m}} }
+$$
+
+Stability of the system can then be evaluated based on the position of the poles. 
+Figure \ref{fig:Stability} shows typical system pole locations and their corresponding transient responses. 
+
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/Stability.png}
+        \caption{Typical pole locations and corresponding transient responses \cite{kim17}}
+        \label{fig:Stability}
+\end{figure}
+
+We can investigate the nature of response of the system by comparing it to the standard second order lag:
+
+$$ G(s)= \frac{ \omega_{n}^{2} }{ s^{2} + 2 \zeta\omega_{n} s + \omega_{n}^{2} } $$
+
+From this, we can extract 
+$ \omega_{n}= \frac{1}{\sqrt{\tau_{e}\tau_{m}}} $ 
+and $ \zeta= \frac{1}{2} \sqrt{\frac{\tau_{m}}{\tau_{e}}} $
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{First Order Simplification}
+Further, if we assume that the response of the electrical system is much faster than that of the mechanical system, 
+we can ignore the transient of the electrical system such that $L_{a}= 0$, then we have a first order system:
+
+$$
+\frac{\omega_{m}(s)}{V_{a}(s)}= \frac{ K }{ R_{a} J s + K^{2} }
+$$
+
+
+%---------------------------------------------------------------------------------------------------------------------------%
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsection{Motor Control System}
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{Cascaded Control Loop}
+
+In controlling a DC motor, we may have a configuration of about 3 cascaded loops. Figure \ref{fig:Cascaded} shows such a setup. 
+For topologies like this to work, each inner loop must be considerably faster (at least about 5 times) than it's enclosing loop 
+to prevent interference with the control action. \\
+
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/Cascaded_loops.png}
+        \caption{Configuration of Motor Control System \cite{kim17}}
+        \label{fig:Cascaded}
+\end{figure}
+
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{Feedforward Control}
+
+With feedback control, the controller can only react to the disturbance after it must have affected the control output, 
+in situations where the disturbance signal can be estimated (e.g. the back EMF of a DC motor), we can proactively couteract its effect 
+using a technique known as feedforward control.\\
+
+In DC motor current control, an estimate of the back EMF can be fed-forward. Likewise in speed control of DC motors, an estimate of 
+the load torque can be added to the control signal. These compensations help speed up the response of the control system. 
+
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/feedforward_control.png}
+        \caption{Feedforward Control \cite{kim17}}
+        \label{fig:Cascaded}
+\end{figure}
+
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{Aside: Bandwidth and Stability Margins in Feedback Control}
+
+The frequency response of a linear system is system's steady-state open-loop response to sinusoidal inputs of different frequencies. 
+The Bode Plot provides the frequency response in terms of the change in magnitude($dB$) and the phase shift($\deg$). 
+The gain cross-over frequency is the frequncy at which the magnitude response crossed the $0dB$ line, 
+while the phase cross-over frequency is the frequency at which the phase response crosses $180\deg$.  \\
+
+The bandwidth of a closed-loop system is the frequency at which the output power falls to half of the input power, 
+that is, the magnitude response is at the $-3dB$ point. 
+The bandwidth may be used in measuring the system's speed of response. 
+\\
+The gain margin of a system refers to how much gain that can be added to a system such that its closed loop response remains stable. 
+It is the amount of gain required to push the magnitude response at the phase cross-over frequency to $0dB$.  
+The phase margin on the other hand refers to how much phase-shift is a system is allowed within which its closed loop response remains stable. 
+It is the amount of phase shift required to push the phase at the gain cross-over frequency to $180\deg$. 
+Figure \ref{fig:gain_phase_margin} shows gain and phase margins for stable and unstable systems. 
+As a rule of thumb, the gain and phase margins for closed-loop system design should be about $2-10dB$ and $30-60\deg$ respectively.  
+\\
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/gain_and_phase_margins.png}
+        \caption{Gain and Phase Margins \cite{kim17}}
+        \label{fig:gain_phase_margin}
+\end{figure}
+
+To understand the concept of stability margins in terms of a system's frequency response, let's consider a feedback system with a pure sinusoidal input. 
+If the system's frequency response has magnitude $0dB$ and phase $180\deg$ at some frequency $\omega$, 
+then the open-loop response of such a system is an equal and opposite sinusoid. 
+Thus effectively transforming the negative feedback into a positive feedback and rendering the system unstable. 
+Figure \ref{fig:Stability_mar_unst} gives an illustration of this.
+\\
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/Stability_margins_unstable.png}
+        \caption{Unstable Feedback System \cite{kim17}}
+        \label{fig:Stability_mar_unst}
+\end{figure}
+
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{Current Controller Design}
+
+The block diagram of a DC motor with a PI current controller $D_{i}(s)$ is shown in Figure \ref{fig:DC_current_ctrl}. 
+From this, we can extract the system output as: 
+
+$$ I_{a}= \frac{ \frac{D_{i}(s)}{L_{a} s + R_{a}} }{ 1 + \frac{D_{i}(s)}{L_{a} s + R_{a}} } I_{a}^{*}(s) 
+        - \frac{ \frac{1}{L_{a} s + R_{a}} }{ 1 + \frac{D_{i}(s)}{L_{a} s + R_{a}} } E_{a}(s) $$
+
+with $D_{i}(s)= K_{pi} + \frac{K_{ii}}{s}$, we have:
+
+$$ I_{a}= \frac{ s K_{pi} + K_{ii} }{ s^{2} L_{a} + s R_{a} + s K_{pi} + K_{ii} } I_{a}^{*}(s) 
+        - \frac{1}{ s^{2} L_{a} + s R_{a} + s K_{pi} + K_{ii} } E_{a}(s) $$
+
+since the back EMF pf the motor can easily be estimated from its speed, we can implement a feedforward controller to compensate for this disturbance, 
+thus neglecting $E_{a}(s)$, we have:
+
+$$ I_{a}= \frac{ s K_{pi} + K_{ii} }{ s^{2} L_{a} + s R_{a} + s K_{pi} + K_{ii} } I_{a}^{*}(s) $$
+\\
+
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/DC_motor+current_controller.png}
+        \caption{Current Control \cite{kim17}}
+        \label{fig:DC_current_ctrl}
+\end{figure}
+
+\textbf{Design with Pole-Zero Cancellation: } We can tune the PI current controller parameters using classical PID tuning methods 
+(such Ziegler Nichols, etc), but pole-zero cancellation can also work. 
+Let's consider the open loop transfer function:
+
+$$ G_{o}(s)= \frac{ s K_{pi} + K_{ii} }{s} \frac{1}{ s L_{a} + R_{a} } $$
+
+re-arranging, we have: 
+
+$$ G_{o}(s)= K_{pi} \frac{s + \frac{K_{ii}}{K_{pi}}}{s} \frac{\frac{1}{L_{a}}}{s + \frac{R_{a}}{L_{a}}}  $$
+
+now, if we let $\frac{K_{ii}}{K_{pi}} = \frac{R_{a}}{L_{a}}$, then we have:
+
+$$ G_{o}(s)= \frac{K_{pi}}{s L_{a}}  $$
+
+With this, we can evaluate the stability margins for the closed-loop system.  
+\\
+
+The resulting closed-loop system has a transfer function: 
+
+$$ G(s)= \frac{K_{pi}}{s L_{a} + K_{pi}}= \frac{K_{pi}}{ L_{a} \left( s + \frac{K_{pi}}{L_{a}} \right) }$$
+
+let $\omega_{ci}= \frac{K_{pi}}{L_{a}}$, then:
+
+$$ G(s)= \frac{\omega_{ci}}{ s + \omega_{ci} } $$
+
+By evaluating $\left| G(j\omega) \right|= \frac{1}{\sqrt{2}}$, we find the bandwidth of the closed loop system to be $\omega_{ci}$. 
+
+Recall that from the zero-pole cancellation design step, we made $\frac{K_{ii}}{K_{pi}} = \frac{R_{a}}{L_{a}}$, 
+relating this with our expression for the bandwidth $\omega_{ci}= \frac{K_{pi}}{L_{a}}$, we can select the PI controller parameters as: 
+
+$$ K_{pi}= \omega_{ci} L_{a} $$
+$$ K_{ii}= \omega_{ci} R_{a} $$
+\\
+
+\textbf{Bandwidth Selection: } In our design process, we have the freedom of selecting the bandwidth of our PI current controller. 
+However, we cannot do this arbitrarily. The bandwidth of the PI contoller is limited by 2 major factors: 
+the switching frequency of the power electronics that provide the armature voltage; 
+and the sampling frequency at which current is fed back to the digital controller. 
+As a rule of thumb, the bandwidth should be restricted to $\frac{1}{25}$ of the sampling period. \\
+
+\textbf{Anti-windup Controller: }As with all controllers with an integrator, a PI controller is susceptible to a phenomenon known as integral wind-up. 
+This occurs when the integrator keeps accumulating error even after the actuator saturates. 
+If the error changes sign suddenly, this accumulated error results in an overshoot and a sluggish respose. 
+There are a variety of techniques for combatting integral windup, Figure \ref{fig:back_calculation} shows one of such. 
+The idea of the back-calculation anti-windup controller is to compute the difference between the output of the controller and the actual control signal, 
+then scale this difference by the inverse of the controller's proportional gain and subtract this from the error signal that's input 
+into the integral part of the controller. 
+
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/DC_motor+current_ctrl+anti_windup.png}
+        \caption{Current Controller with Back Calculation Anti-windup \cite{kim17}}
+        \label{fig:back_calculation}
+\end{figure}
+
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{Speed Controller Design}
+Because of the cascaded structure of the control system (as shown in Figure \ref{fig:Cascaded}), 
+the bandwidth of the closed-loop current control system $\omega_{ci}$ must be significantly higher than that of the speed control system. 
+This, together with the sampling frequency at which the speed is fed back to the digital controller are the restricting 
+factors on the bandwidth of the speed control system $\omega_{cs}$. 
+$\omega_{cs}$ should be selected such that it is within $\frac{1}{10}$ to $\frac{1}{20}$ of the speed sampling frequency. 
+
+Another factor that can greatly simplify our design process is by selecting gains $K_{ps}$ and $K_{is}$ of the PI speed controller 
+$D_{s}(s)$ such that $\frac{K_{is}}{K_{ps}}$ is at least 5 times less than $\omega_{cs}$. 
+
+$$ D_{s}(s)= K_{ps} + \frac{K_{is}}{s} $$
+
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/DC_motor_speed_control.png}
+        \caption{Speed Control System \cite{kim17}}
+        \label{fig:DC_motor_speed_control}
+\end{figure}
+
+Figure \ref{fig:DC_motor_speed_control} shows the block diagram of the speed control system (neglecting the rotational damping in the motor). 
+We can extract the open-loop transfer function from $\omega_{m}^{*}(s)$ to $\omega_{m}(s)$ as: 
+
+$$ G_{o}(s)= \left( K_{ps} + \frac{K_{is}}{s} \right) \left( \frac{\omega_{ci}}{s + \omega_{ci}} \right)  
+                \left( \frac{K_{T}}{s J} \right) $$
+
+with $K_{T}= k_{t} \phi_{f}$.
+//
+
+$\omega_{ci}$ >> $\omega_{cs}$ implies that around $\omega= \omega_{cs}$, 
+
+$$ \frac{\omega_{ci}}{s + \omega_{ci}} \approx 1 $$
+
+and $\frac{K_{is}}{K_{ps}}$ << $\omega_{cs}$ means that around $\omega= \omega_{ci}$,
+
+$$ K_{ps} + \frac{K_{is}}{s} \approx K_{ps} $$
+
+working with these simplifying quantifications, the open-loop transfer function around $\omega= \omega_{cs}$ becomes:
+
+$$ G_{o}(s)= \frac{ K_{pi} K_{T}}{s J} $$
+
+yielding a closed-loop transfer function of: 
+
+$$ G(s)= \frac{ \frac{K_{ps} K_{T}}{J} }{ s + \frac{K_{ps} K_{T}}{J} } $$
+
+with $\left| G(j\omega) \right|= \frac{1}{\sqrt{2}}$ at $\omega= \frac{K_{ps} K_{T}}{J}$, 
+making $\omega_{cs}= \frac{K_{ps} K_{T}}{J}$
+
+If we make $5 \frac{K_{is}}{K_{ps}}$ = $\omega_{cs}$, then we can select the parameters for the PI speed controller as:
+
+$$ K_{ps}= \frac{J \omega_{cs}}{K_{T}} $$
+$$ K_{is}= \frac{K_{ps} \omega_{cs}}{5}= \frac{J \omega_{cs}^{2}}{5 K_{T}} $$
+
+
+%---------------------------------------------------------------------------------------------------------------------------%
+\subsubsection{Power Electronic Converter for DC Motors}
+
+The H-bridge (shown in Figure \ref{fig:H_Bridge}) is the most widely used DC-DC converter for DC motor control. 
+There are 2 PWM techniques for adjusting the voltage supplied to the DC motor:
+
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.3]{img/H-bridge.png}
+        \caption{H-Bridge \cite{kim17}}
+        \label{fig:H_Bridge}
+\end{figure}
+
+\begin{itemize}
+        \item \textbf{Bipolar Switching: }In this scheme (shown in Figure \ref{fig:PWM_bipolar}), 
+                the diagonal switches ($T_{1}$ and $T_{4}$; $T_{2}$ and $T_{3}$) are toggled at the same time. 
+                A triangular carrier wave is used, and the forward conducting switches ($T_{1}$ and $T_{4}$) are triggered 
+                on when $V_{a}^{*}$\textemdash which is the desired armature voltage\textemdash is greater then the carrier wave. 
+                The instanteneous voltage at switching instant is $2V_{dc}$ and thus the current ripple is relatively large.  
+
+                \begin{figure}
+                        \centering
+                        \includegraphics[scale=0.4]{img/H-bridge_PWM_bipolar.png}
+                        \caption{H-Bridge Bipolar PWM Switching \cite{kim17}}
+                        \label{fig:PWM_bipolar}
+                \end{figure}
+
+
+        \item \textbf{Unipolar Switching: }This scheme triggers each switch independently by comparing the carrier wave to the 
+                set voltage reference for points $V_{H}$ and $V_{L}$ which are the desired armature voltage and the negative of the 
+                desired armature voltage respectively. If $V_{a}^{*}$ is greater than the carrier wave, then $T_{1}$ is switched ON 
+                and $T_{3}$ OFF. Else, $T_{3}$ is ON and $T_{1}$ OFF. Independently, if  the carrier wave is less than $-V{a}^{*}$, 
+                $T_{2}$ is ON and $T_{4}$ OFF, and vice versa as shown in Figure \ref{fig:PWM_unipolar}. 
+                This scheme produces less current ripple as the maximum instanteneous voltage at any point is $V_{a}^{*}$.
+
+                \begin{figure}
+                        \centering
+                        \includegraphics[scale=0.4]{img/H-bridge_PWM_unipolar.png}
+                        \caption{H-Bridge Unipolar PWM Switching \cite{kim17}}
+                        \label{fig:PWM_unipolar}
+                \end{figure}
+
+
+\end{itemize}
+
+
+\pagebreak
+
+\bibliographystyle{plain}
+\bibliography{references} 
+
+\end{document}
