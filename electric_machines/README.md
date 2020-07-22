@@ -1,15 +1,7 @@
-# Control of Electric Motors
+## Control of Electric Drives
 
-
-------------------------------------------------------------------------
-## Relevant Theoretic Materials
-
-
-------------------------------------------------------------------------
-## Simulation
-
-### DC Motor
-
-
-#### No Load
-
+### Goals
+Implement the following drive configurations and suitable control systems:
+- 2 quadrant operation with DC machine
+- 4 quadrant operation with DC machine
+ 
