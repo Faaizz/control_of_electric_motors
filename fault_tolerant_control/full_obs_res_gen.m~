@@ -1,0 +1,30 @@
+% THIS SCRIPT GENERATES RESIDUAL SIGNAL(S) USING A 
+% FULL-ORDER OBSERVER.
+%
+% SIMULINK MODEL: full_obs_res_gen_sim.slx
+%====================================================================
+
+%% Initialize Plant Model
+init_demo_plant
+
+% No of states
+n= size(A,1);
+% No of inputs
+m= size(B,2);
+% No of outputs
+p= size(C,1);
+% No of residual signals to generate
+q= p;
+
+% Residual weighting Matrix
+W= eye(q,p);
+
+
+%% Oberver Design
+% Poles
+poles= [-0.5; -0.5; -0.5];
+L= pl
+
+
+%% Simulation
+%sim_out= sim('DC_motor_drive_sim', end_time);
