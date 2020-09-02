@@ -1,0 +1,3 @@
+% THIS SCRIPT PUBLISHES GENERALIZED MACHINE PLOTS
+% 1- Supply (Current and Voltage)
+% 2- 

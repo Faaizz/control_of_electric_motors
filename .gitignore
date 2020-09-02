@@ -9,6 +9,7 @@
 
 # Simulink Files
 *.slxc
+*.asv
 slprj/
 
 # Image Files
