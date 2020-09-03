@@ -11,6 +11,10 @@ init_demo_plant
 n= size(A,1);
 % No of inputs
 m= size(B,2);
+% No of disturbance inputs
+n_d= size(E_d,2);
+% No of fault inputs
+n_f= size(E_f,2);
 % No of outputs
 p= size(C,1);
 % No of residual signals to generate
@@ -29,14 +33,23 @@ poles= [-0.5; -0.5; 0.0];
 L= place(A', C', poles)';
 
 
-%% Fault Design
-fault_time= 5;
-% Fault amplitude
-fault_amp= -15;
+%% Simulation Signals
+
+end_time= 150;
+
+% Signals
+% Min & Max input amplitude
+mag_min= -5;
+mag_max= 5;
+% Input stairs interval
+stair_int= 3;
+
+% Create DemoSignals object
+sigs= DemoSignals(m, mag_min, mag_max, n_d, n_f, stair_int, end_time);
+
+
 
 %% Simulation
-
-end_time= 15;
 
 sim_out= sim('full_obs_res_gen_sim', end_time);
 
