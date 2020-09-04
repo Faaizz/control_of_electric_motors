@@ -16,5 +16,9 @@ slprj/
 /img
 
 # Matlab Drive
-.MATLABDriveTag
+*.MATLABDriveTag
+*.m~
+
+# Temp
+fault_tolerant_control/Matlab\ Examples/
 
