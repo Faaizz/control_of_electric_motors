@@ -1,11 +1,14 @@
-% THIS SCRIPT GENERATES RESIDUAL SIGNAL(S) USING THE PARITY SPACE  
-% APPROACH.
+% THIS SCRIPT GENERATES RESIDUAL SIGNAL(S) USING THE UNKNOWN INPUT  
+% OBSERVER APPROACH
+%
+% THE AIM IS TO GENERATE RESIDUALS THAT ARE INDEPENDENT OF UNKNOWN 
+% DISTURBANCES.
 %
 % SIMULINK MODEL: 
 %====================================================================
 
 %% Initialize Plant Model
-init_demo_plant
+init_demo_plant_2
 
 % No of states
 n= size(A,1);
@@ -27,109 +30,100 @@ x_0= 5.*ones(3,1);
 W= eye(q,p);
 
 
-%% Parity Relation Equation (Matrix Version)
+%% Observer Design
 
-% Window size
-s= 3;
+M= inv(C*E_d);
 
-% H_os, H_us, H_ds, H_fs
-H_os = zeros(s*p,n);
-H_us= zeros(s*p,s*m);
-H_ds= zeros(s*p,s*n_d);
-H_fs= zeros(s*p,s*n_f);
+poles= [-0.2, 0.13, 0.07];
 
-for r = 1:s
-    H_os((r-1)*p+1:r*p,1:n) = C*(A^(r-1));
-    for c = 1:r
-        if r == c
-            H_us((r-1)*p+1:r*p,(c-1)*m+1:c*m) = D;
-            H_ds((r-1)*p+1:r*p,(c-1)*n_d+1:c*n_d) = F_d;
-            H_fs((r-1)*p+1:r*p,(c-1)*n_f+1:c*n_f) = F_f;
-        else 
-            H_us((r-1)*p+1:r*p,(c-1)*m+1:c*m) = C*A^(r-c-1)*B;
-            H_ds((r-1)*p+1:r*p,(c-1)*n_d+1:c*n_d) = C*A^(r-c-1)*E_d;
-            H_fs((r-1)*p+1:r*p,(c-1)*n_f+1:c*n_f) = C*A^(r-c-1)*E_f;
-        end
-    end
-end
-
-
-%% Parity Vector
-% v_s*H_us = 0
-% v_s must be in the left null space of H_us = right null space of H_us'
-
-% Parity Matrix
-V_s= (null(H_os'))';
-
-% Parity Vector
-v_s= V_s(1,:);
-
-
-% Pre-computation of v_s*H_os
-v_s_H_us= v_s*H_us;
+L= place((A-E_d*M*C*A)', C', poles)';
 
 
 %% Simulation Signals
+
+
+% System Transformation
+A_tot= A-E_d*M*C*A;
+B_tot= B-E_d*M*C*B;
+E_d_M= E_d*M;
+A_tot_E_d_M= A_tot*E_d_M;
 
 % Number of steps
 sim_steps= 150;
 
 % Input Matrix
-mag_min= -5;
-mag_max= 5;
+mag_min= -15;
+mag_max= 15;
 u_k= randi([mag_min, mag_max], m, sim_steps);
 
 % Disturbance Matrix
 d_k= 0.01*rand(n_d, sim_steps); 
 
 % Faults
-f_times= randi([(s+1), (sim_steps-50)], n_f, 1);
+f_times= randi([(1), (sim_steps-50)], n_f, 1);
 f_k= zeros(n_f, sim_steps);
 
 % Output matrix
 y_k= zeros(p, sim_steps);
+% Observer Output
+y_k_hat= zeros(p, sim_steps);
 % State matrix
 x_k= zeros(n, sim_steps);
+z_k= zeros(n, sim_steps);
+% Observer State matrix
+x_k_hat= zeros(n, sim_steps);
+z_k_hat= zeros(n, sim_steps);
 
 % Initial state
 x_k(:,1)= 2+zeros(n,1);
+z_k(:,1)= 2+zeros(n,1);
+% Observer Initial state
+x_k_hat(:,1)= zeros(n,1);
+z_k_hat(:,1)= zeros(n,1);
+
+% Errors
+e_k= zeros(n, (sim_steps));
+e_z_k= zeros(n, (sim_steps));
 
 % Residual
-r_k= zeros(1, (sim_steps-s));
+r_k= zeros(p, (sim_steps));
 
 
 %% Simulation
 
 % Before time k
 % We need prior data for k-s to be valid
-for idx= 1:(s+1)
-    % Next state
-    x_k(:, (idx+1))= A*x_k(:,idx) + B*u_k(:,idx) + E_d*d_k(:,idx);
-    % Output
-    y_k(:, idx)= C*x_k(:,idx) + D*u_k(:,idx) + F_d*d_k(:,idx);
-end
-
-
-% After Time k
-for idx= (s+1):sim_steps
+for idx= 1:sim_steps
     
     % Fault
-    f_k_curr= mag_max*ones(n_f, 1)*(idx>=f_times);
+    f_k_curr= 0.5*mag_max*ones(n_f, 1)*(idx>=f_times);
     f_k(:, idx)= f_k_curr;
+    
+    % SYSTEM
     % Next state
-    x_k(:, (idx+1))= A*x_k(:,idx) + B*u_k(:,idx) + E_d*d_k(:,idx) + E_f*f_k(:, idx);
+    x_k(:, (idx+1))= A*x_k(:,idx) + B*u_k(:,idx) + E_d*d_k(:,idx) + ...
+                        E_f*f_k(:, idx);
+    
     % Output
-    y_k(:, idx)= C*x_k(:,idx) + D*u_k(:,idx) + F_d*d_k(:,idx) + F_f*f_k(:, idx);
+    y_k(:, idx)= C*x_k(:,idx) + D*u_k(:,idx) + F_d*d_k(:,idx) + ...
+                    F_f*f_k(:,idx);
+    z_k(:, (idx))= x_k(:, (idx)) - E_d_M*y_k(:,idx);                
+    
+    % OBSERVER
+    % Estimated State
+    x_k_hat(:, (idx))= z_k_hat(:, (idx)) + E_d_M*y_k(:, idx);
+    % Output
+    y_k_hat(:, idx)= C*z_k_hat(:,idx) + C*E_d*y_k(:,idx);
+    % Next state
+    z_k_hat(:, (idx+1))= A_tot*z_k_hat(:,idx) + B_tot*u_k(:,idx) + ...
+                   A_tot_E_d_M*y_k(:,idx) + L*(y_k(:,idx) - y_k_hat(:,idx));
+               
+    % Estimation Error
+    e_k(:, (idx))= x_k(:,idx)- x_k_hat(:,idx);
     
     % Residual Generation
-    % y_s
-    y_s_k= y_k(:, (idx-s+1):(idx));
-    y_s_k= y_s_k(:);
-    % u_s
-    u_s_k= u_k(:, (idx-s+1):(idx));
-    u_s_k= u_s_k(:);
     % Residual
-    r_k(:, (idx-s))= v_s*y_s_k - v_s_H_us*u_s_k;
+    r_k(:, (idx))= W*( y_k(:,idx) - y_k_hat(:,idx) );
     
 end
 
@@ -137,11 +131,12 @@ end
 %% Plotting
 
 % Signal Conditioning
-x_plot= x_k(:, s+1:sim_steps);
-u_plot= u_k(:, s+1:sim_steps);
-y_plot= y_k(:, s+1:sim_steps);
-d_plot= d_k(:, s+1:sim_steps);
-f_plot= f_k(:, s+1:sim_steps);
+x_plot= x_k(:, 1:sim_steps);
+e_plot= e_k(:, 1:sim_steps);
+u_plot= u_k(:, 1:sim_steps);
+y_plot= y_k(:, 1:sim_steps);
+d_plot= d_k(:, 1:sim_steps);
+f_plot= f_k(:, 1:sim_steps);
 r_plot= r_k;
 
 
@@ -205,12 +200,23 @@ grid minor;
 % Residual
 subplot(3,2,4);
 hold on;
-plot(plot_time,r_plot,'Marker','none','LineWidth',LineWidth, 'Color', 'r');
+plot(plot_time,r_plot,'Marker','none','LineWidth',LineWidth);
 set(gca,'LineWidth',LineWidthAxes);
 set(gca,'FontName',FontName,'FontSize',FontSize);
 xlabel('{\it k}','FontName',FontName,'FontSize',FontSize,'Interpreter','tex');
 ylabel('{\it r}','FontName',FontName,'FontSize',FontSize,'Interpreter','tex');
 title("Residual");
+grid minor;
+
+% State
+subplot(3,2,6);
+hold on;
+plot(plot_time,e_plot,'Marker','none','LineWidth',LineWidth);
+set(gca,'LineWidth',LineWidthAxes);
+set(gca,'FontName',FontName,'FontSize',FontSize);
+xlabel('{\it k}','FontName',FontName,'FontSize',FontSize,'Interpreter','tex');
+ylabel('{\it e}','FontName',FontName,'FontSize',FontSize,'Interpreter','tex');
+title("State Estimation Error");
 grid minor;
 
 
